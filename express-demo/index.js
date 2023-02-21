@@ -1,11 +1,18 @@
 const Joi = require("joi");
+
 const logger = require("./logger");
 const authenticator = require("./authenticator");
 const express = require("express");
+const helmet = require("helmet");
+const morgan = require("morgan");
 const { valid } = require("joi");
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); //key=value&key=value for html forms
+app.use(express.static("public")); // all static assets (css, images, etc) go into folder specified
+app.use(helmet()); // sets http headers (for cors etc)
+app.use(morgan("tiny")); // upon http request, logs request info in terminal  - argument 'tiny' refers to the info in the log
 
 app.use(logger);
 app.use(authenticator);
