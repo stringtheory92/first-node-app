@@ -6,13 +6,24 @@ const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const { valid } = require("joi");
+const { acceptsLanguage } = require("express/lib/request");
 const app = express();
+
+// process.env.NODE_ENV; // returns the current environment. Value can be undefined, development, testing, staging, production
+// console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+
+// app.get("env"); // under the hood it uses process.env.NODE_ENV to determine environment. Only difference is if it's not set, will return development by default
+// console.log(`app: ${app.get("env")}`);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //key=value&key=value for html forms
 app.use(express.static("public")); // all static assets (css, images, etc) go into folder specified
 app.use(helmet()); // sets http headers (for cors etc)
-app.use(morgan("tiny")); // upon http request, logs request info in terminal  - argument 'tiny' refers to the info in the log
+
+if (app.get("env") === "development") {
+  app.use(morgan("tiny")); // upon http request, logs request info in terminal  - argument 'tiny' refers to the info in the log
+  console.log("morgan enabled");
+}
 
 app.use(logger);
 app.use(authenticator);
